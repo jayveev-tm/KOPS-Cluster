@@ -1,7 +1,7 @@
 image: ubuntu:18.04
 
 stages:
-    - container
+    - runner-container
     - cluster
     - metrics
     - hpa
@@ -11,13 +11,13 @@ stages:
 ## setup runner image ##
 ########################
 
-container:
+runner-container:
     stage: container
     script:
         - apt-get update
         - apt-get install curl -y
-#        - chmod +x kops/ins-kops.sh
-#        - ./kops/ins-kops.sh
+        - chmod +x kops/ins-kops.sh
+        - ./kops/ins-kops.sh
         
 ####################
 ## Update Cluster ##
