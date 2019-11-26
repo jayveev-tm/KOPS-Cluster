@@ -14,6 +14,7 @@ cluster:
     stage: cluster
     script:
         - chmod +x kops/ins-kops.sh
+        - ./kops/ins-kops.sh
         - chmod +x deploy.sh
         - sh deploy.sh
 
