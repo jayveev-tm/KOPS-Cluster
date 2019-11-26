@@ -23,3 +23,15 @@ cluster:
         #deploy K8s cluster
         - chmod +x deploy.sh
         - sh deploy.sh
+
+############################
+## install metrics server ##
+############################
+
+metrics:
+    stage: metrics
+    script:
+    #install kubectl
+    - chmod +x kops/kubectl.sh
+    - ./kops/kubectl.sh
+    - kubectl apply -f ./metrics/
