@@ -1,0 +1,160 @@
+# This runnre is for DeployArk project
+
+
+
+# GitLab CI Kubernetes Executor
+# https://docs.gitlab.com/runner/executors/kubernetes.html
+# https://gitlab.com/gitlab-org/gitlab-runner/tags
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitlab
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  namespace: gitlab
+  name: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: gitlab
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: gitlab
+  name: my-runner
+  labels:
+    app: my-runner
+data:
+  config.toml: |
+    concurrent = 10
+    check_interval = 3
+    log_level = "info"
+    listen_address = "0.0.0.0:8080"
+  entrypoint: |
+    #!/bin/bash
+    set -xe
+    cp -f /scripts/config.toml /etc/gitlab-runner/
+    # disable docker TLS: https://gitlab.com/gitlab-org/gitlab-runner/issues/4501
+    /entrypoint --log-level=debug register --non-interactive --executor=kubernetes --tag-list="linux,docker" \
+      --env="DOCKER_DRIVER=overlay2" --env="DOCKER_HOST=tcp://localhost:2375" --env="DOCKER_TLS_CERTDIR="
+    /entrypoint run --user=gitlab-runner --working-directory=/home/gitlab-runner
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: runner-token
+  namespace: gitlab
+type: Opaque
+data:
+  my-gitlab: VGRVTFozb3J5ODctZENrem5qeHk= #runner token
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: gitlab
+  name: my-runner
+  labels:
+    app: my-runner
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: my-runner
+  template:
+    metadata:
+      labels:
+        app: my-runner
+    spec:
+      volumes:
+      - name: scripts
+        configMap:
+          name: my-runner
+      dnsConfig:
+        options:
+          - name: single-request-reopen
+      nodeSelector:
+        kops.k8s.io/instancegroup: nodes
+      containers:
+      - name: gitlab-runner
+        image: gitlab/gitlab-runner:v12.3.0
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/bash
+        - /scripts/entrypoint
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - gitlab-runner
+              - unregister
+              - --all-runners
+        volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+        env:
+        - name: CI_SERVER_URL
+          value: http://gitlab.jayveev.me.uk/ #GitLab URL
+        - name: REGISTRATION_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: runner-token
+              key: my-gitlab
+        - name: RUNNER_TAG_LIST
+          value: linux,docker
+        - name: KUBERNETES_NAMESPACE
+          value: gitlab
+        - name: KUBERNETES_PRIVILEGED
+          value: "true"
+        - name: KUBERNETES_IMAGE
+          value: docker:stable-git
+        - name: KUBERNETES_PULL_POLICY
+          value: if-not-present
+        - name: KUBERNETES_POLL_INTERVAL
+          value: "5"
+        - name: KUBERNETES_POLL_TIMEOUT
+          value: "3600"
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - gitlab.*runner
+          initialDelaySeconds: 60
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - gitlab.*runner
+          initialDelaySeconds: 10
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
