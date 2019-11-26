@@ -1,0 +1,62 @@
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: 2019-11-19T06:27:45Z
+  labels:
+    kops.k8s.io/cluster: jvprod.jayveev.me.uk
+  name: master-us-east-2a
+spec:
+  image: ami-083b21781aaea56c3
+  machineType: t2.large
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    kops.k8s.io/instancegroup: master-us-east-2a
+  cloudLabels:
+    node-role.kubernetes.io/master: "true"
+  role: Master
+  subnets:
+  - us-east-2a
+    #  addtinalSecurityGroups:
+    #       - sg-0185c8b8921acdf62
+  additionalUserData:
+  - name: installdsa.sh
+    type: text/x-shellscript
+    content: |
+      #!/bin/sh
+      dpkg -i /var/cache/Agent-Core-Debian_9-12.0.0-364.x86_64.deb
+      /opt/ds_agent/dsa_control -a dsm://agents.deepsecurity.trendmicro.com:443/ "tenantID:7014C2B7-0A58-F04D-9026-B497235D0E61" "token:13D37D80-354C-B247-8603-3FD2E401E017" "policyid:100"
+
+---
+
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: 2019-11-19T06:27:45Z
+  labels:
+    kops.k8s.io/cluster: jvprod.jayveev.me.uk
+  name: nodes
+spec:
+  image: ami-083b21781aaea56c3
+  machineType: t2.medium
+  maxSize: 5
+  minSize: 2
+  nodeLabels:
+    kops.k8s.io/instancegroup: nodes
+  role: Node
+  #for cluster-autoscaler discovery
+  cloudLabels:
+    k8s.io/cluster-autoscaler/jvprod.jayveev.me.uk: "owned"
+    k8s.io/cluster-autoscaler/enabled: ""
+  subnets:
+  - us-east-2a
+    #  additionalSecurityGroups:
+    #     - sg-0185c8b8921acdf62
+  additionalUserData:
+  - name: installdsa.sh
+    type: text/x-shellscript
+    content: |
+      #!/bin/sh
+      #activate DSaaS agent
+      dpkg -i /var/cache/Agent-Core-Debian_9-12.0.0-364.x86_64.deb
+      /opt/ds_agent/dsa_control -a dsm://agents.deepsecurity.trendmicro.com:443/ "tenantID:7014C2B7-0A58-F04D-9026-B497235D0E61" "token:13D37D80-354C-B247-8603-3FD2E401E017" "policyid:100"
