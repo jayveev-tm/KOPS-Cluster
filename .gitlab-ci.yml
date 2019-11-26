@@ -14,7 +14,7 @@ before_script:
         - chmod +x kops/ins-kops.sh
         - ./kops/ins-kops.sh
         - ./kops/kubectl.sh
-        - kops export kuecfg ${NAME}
+        - kops export kubecfg ${NAME}
 
 ####################
 ## Update Cluster ##
