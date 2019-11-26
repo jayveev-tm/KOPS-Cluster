@@ -23,9 +23,3 @@ cluster:
         #deploy K8s cluster
         - chmod +x deploy.sh
         - sh deploy.sh
-
-metrics:
-    stage: metrics
-    script:
-        - echo "Testing"
-        - test -f "build/info.txt"
