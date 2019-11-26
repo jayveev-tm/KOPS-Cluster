@@ -12,7 +12,7 @@ cluster:
     stage: cluster
     script:
         - chmod +x deploy.sh
-        - ./deploy.sh
+#        - ./deploy.sh
 
 metrics:
     stage: metrics
