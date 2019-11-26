@@ -1,19 +1,20 @@
 stages:
-    - build
-    - test
- 
-build:
-    stage: build
+    - cluster
+    - metrics
+    - hpa
+    - ca
+
+####################
+## Update Cluster ##
+####################
+
+cluster:
+    stage: cluster
     script:
-        - echo "Building"
-        - mkdir build
-        - touch build/info.txt
-    artifacts:
-        paths:
-            - build/
- 
-test:
-    stage: test
+        - ./deploy.sh
+
+metrics:
+    stage: metrics
     script:
         - echo "Testing"
         - test -f "build/info.txt"
