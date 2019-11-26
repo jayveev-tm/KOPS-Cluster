@@ -4,7 +4,7 @@
 
 source export.sh
 kops create cluster --zones us-east-2a ${NAME}
-kops replace -f ./templates/ig.yaml
-kops replace -f ./templates/cluster.yaml
+kops replace -f ./kops/ig.yaml
+kops replace -f ./kops/cluster.yaml
 kops create secret --name ${NAME} sshpublickey admin -i key.pub
 kops update cluster ${NAME} --yes
