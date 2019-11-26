@@ -1,24 +1,11 @@
 image: ubuntu:18.04
 
 stages:
-    - runnercontainer
     - cluster
     - metrics
     - hpa
     - ca
-
-########################
-## setup runner image ##
-########################
-
-runnercontainer:
-    stage: runnercontainer
-    script:
-        - apt-get update
-        - apt-get install curl -y
-        - chmod +x kops/ins-kops.sh
-        - ./kops/ins-kops.sh
-        
+ 
 ####################
 ## Update Cluster ##
 ####################
@@ -26,6 +13,12 @@ runnercontainer:
 cluster:
     stage: cluster
     script:
+        #prepare container image
+        - apt-get update
+        - apt-get install curl -y
+        - chmod +x kops/ins-kops.sh
+        - ./kops/ins-kops.sh
+        #deploy K8s cluster
         - chmod +x deploy.sh
         - sh deploy.sh
 
