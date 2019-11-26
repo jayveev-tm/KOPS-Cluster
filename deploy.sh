@@ -8,3 +8,4 @@ kops replace -f ./kops/ig.yaml
 kops replace -f ./kops/cluster.yaml
 kops create secret --name ${NAME} sshpublickey admin -i key.pub
 kops update cluster ${NAME} --yes
+kops rolling update cluster ${NAME} --yes
