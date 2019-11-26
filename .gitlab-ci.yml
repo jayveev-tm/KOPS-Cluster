@@ -5,7 +5,16 @@ stages:
     - metrics
     - hpa
     - ca
- 
+
+#prepare container image
+before_script:
+        - apt-get update
+        - apt-get install curl -y
+        - chmod +x kops/kubectl.sh
+        - chmod +x kops/ins-kops.sh
+        - ./kops/ins-kops.sh
+        - ./kops/kubectl.sh
+
 ####################
 ## Update Cluster ##
 ####################
@@ -13,13 +22,6 @@ stages:
 cluster:
     stage: cluster
     script:
-        #prepare container image
-        - apt-get update
-        - apt-get install curl -y
-        - chmod +x kops/kubectl.sh
-        - chmod +x kops/ins-kops.sh
-        - ./kops/ins-kops.sh
-        - ./kops/kubectl.sh
         #deploy K8s cluster
         - chmod +x deploy.sh
         - sh deploy.sh
@@ -31,7 +33,4 @@ cluster:
 metrics:
     stage: metrics
     script:
-    #install kubectl
-    - chmod +x kops/kubectl.sh
-    - ./kops/kubectl.sh
     - kubectl apply -f ./metrics/
