@@ -10,13 +10,14 @@ stages:
 ########################
 ## setup runner image ##
 ########################
+
 image:
     stage: image
     script:
         - apt-get update
         - apt-get install curl -y
-        - chmod +x kops/ins-kops.sh
-        - ./kops/ins-kops.sh
+#        - chmod +x kops/ins-kops.sh
+#        - ./kops/ins-kops.sh
         
 ####################
 ## Update Cluster ##
