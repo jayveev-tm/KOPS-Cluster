@@ -2,7 +2,6 @@
 #Exit immediately if non-zero exit code is returned by a command
 #set -e
 
-source export.sh
 kops create cluster --zones us-east-2a ${NAME}
 kops replace -f ./kops/ig.yaml
 kops replace -f ./kops/cluster.yaml

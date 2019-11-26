@@ -16,14 +16,10 @@ cluster:
         #prepare container image
         - apt-get update
         - apt-get install curl -y
+        - chmod +x kops/kubectl.sh
         - chmod +x kops/ins-kops.sh
         - ./kops/ins-kops.sh
+        - ./kops/kubectl.sh
         #deploy K8s cluster
         - chmod +x deploy.sh
         - sh deploy.sh
-
-metrics:
-    stage: metrics
-    script:
-        - echo "Testing"
-        - test -f "build/info.txt"
