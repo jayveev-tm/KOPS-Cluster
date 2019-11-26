@@ -11,6 +11,7 @@ stages:
 cluster:
     stage: cluster
     script:
+        - chmod +x ./deploy.sh
         - ./deploy.sh
 
 metrics:
