@@ -1,5 +1,12 @@
+image: ubuntu:18.04
 
-image: 143631420864.dkr.ecr.us-east-2.amazonaws.com/jv-runner:v1
+before_script:
+        - apt-get update
+        - apt-get install curl -y
+        - chmod +x kops/kubectl.sh
+        - chmod +x kops/ins-kops.sh
+        - ./kops/ins-kops.sh
+        - ./kops/kubectl.sh
 
 stages:
     - cluster
