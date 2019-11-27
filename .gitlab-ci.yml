@@ -24,9 +24,6 @@ cluster:
     stage: cluster
     script:
         #deploy K8s cluster
-        - chmod +x deploy.sh
-        - kops replace -f ./kops/ig.yaml
-        - kops replace -f ./kops/cluster.yaml
         - sh deploy.sh
 
 ############################
