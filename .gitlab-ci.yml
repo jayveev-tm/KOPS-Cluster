@@ -3,16 +3,11 @@ image: ubuntu:18.04
 before_script:
         - apt-get update
         - apt-get install curl -y
-        - chmod +x kops/kubectl.sh
-        - chmod +x kops/ins-kops.sh
         - ./kops/ins-kops.sh
         - ./kops/kubectl.sh
 
 stages:
     - cluster
-    - metrics
-    - hpa
-    - ca
 
 ####################
 ## Update Cluster ##
@@ -23,12 +18,3 @@ cluster:
     script:
         #deploy K8s cluster
         - sh deploy.sh
-
-############################
-## install metrics server ##
-############################
-
-metrics:
-    stage: metrics
-    script:
-    - kubectl apply -f ./metrics/
