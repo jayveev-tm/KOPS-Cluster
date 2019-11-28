@@ -47,12 +47,12 @@ spec:
   - 0.0.0.0/0
   subnets:
   #Change CIDR
-  - cidr: 172.31.0.0/20
+  - cidr: 172.31.16.0/20
   #Add subnet ID
-    id: subnet-beb8bbd6
-    name: us-east-2a
+    id: subnet-fa166e80
+    name: us-east-2b
     type: Public
-    zone: us-east-2a
+    zone: us-east-2b
   topology:
     dns:
       type: Public
