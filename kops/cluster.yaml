@@ -36,14 +36,20 @@ spec:
   - 0.0.0.0/0
   kubernetesVersion: 1.14.8
   masterPublicName: api.jvprod.jayveev.me.uk
-  networkCIDR: 172.20.0.0/16
+  #AWS Existing VPC
+  networkID: vpc-fe908b96
+  #VPC subnet
+  networkCIDR: 172.31.0.0/16
   networking:
     kubenet: {}
   nonMasqueradeCIDR: 100.64.0.0/10
   sshAccess:
   - 0.0.0.0/0
   subnets:
-  - cidr: 172.20.32.0/19
+  #Change CIDR
+  - cidr: 172.31.0.0/20
+  #Add subnet ID
+    id: subnet-beb8bbd6
     name: us-east-2a
     type: Public
     zone: us-east-2a
