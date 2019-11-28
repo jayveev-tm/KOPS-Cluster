@@ -14,13 +14,13 @@ spec:
   etcdClusters:
   - cpuRequest: 200m
     etcdMembers:
-    - instanceGroup: master-us-east-2a
+    - instanceGroup: master-us-east-2b
       name: a
     memoryRequest: 100Mi
     name: main
   - cpuRequest: 100m
     etcdMembers:
-    - instanceGroup: master-us-east-2a
+    - instanceGroup: master-us-east-2b
       name: a
     memoryRequest: 100Mi
     name: events
